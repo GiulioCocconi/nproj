@@ -102,8 +102,11 @@ if [[ $1 == "ArduinoLib" ]]; then
 	sed -i "s/DESCRIZIONE/$descrizione/g" library.json
 	sed -i "s/VERSIONE/$versione/g" library.json
 	sed -i "s/LINK/$link.git/g" library.json
-	git remote add origin $link
+	git init
 	git branch -M main
+	git add .
+	git commit -m "Commit automatico da nproj"
+	git remote add origin $link
 	git push -u origin main
 	exit
 fi
