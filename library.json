@@ -1,0 +1,13 @@
+{
+  "name": "NOME",
+  "version": "VERSIONE",
+  "description": "DESCRIZIONE",
+  "keywords": "",
+  "repository":
+  {
+    "type": "git",
+    "url": "LINK"
+  },
+  "frameworks": ["arduino"],
+  "platforms": "*"
+}

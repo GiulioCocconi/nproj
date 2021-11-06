@@ -1,0 +1,131 @@
+#!/usr/bin/bash
+
+# Generatore progetti
+#    - By CoGi
+
+install_dir="/opt/Nproj"
+
+
+function crea_file {
+	touch .projectile
+	touch .gitignore
+}
+
+if [[ $1 == "install" ]]; then
+	if [[ -f "$install_dir/.installed" ]]; then
+		echo "NPROJ già installato"
+		exit
+	fi
+	
+	echo "Installazione script in $install_dir"
+
+	sudo mkdir $install_dir
+	sudo cp $0 $install_dir
+	sudo cp "$(dirname "$0")/CMakeLists.txt" $install_dir
+	sudo chmod 755 "$install_dir/nproj"
+
+	if [[ -d "/opt/bin" ]]; then
+		echo "Creazione alias in /opt/bin..."
+		ln -s "$install_dir/nproj" "/opt/bin/nproj"	
+	fi
+
+	sudo touch "$install_dir/.installed"
+	
+	#sudo rm $0
+	
+	echo "Script installato :-)"
+	exit
+
+fi
+
+if [[ ! -f "$install_dir/.installed" ]]; then
+	echo "Lo script non è installato..."
+	echo "per poterlo usare è prima necessario eseguire '$0 install'"
+	exit
+fi
+
+if [[ $1 == "Empty" ]]; then
+	crea_file
+	exit
+fi
+
+if [[ $1 == "C" ]]; then
+	crea_file
+	echo "Creazione progetto in C..."
+	read -p "Nome del progetto: " nome
+	read -p "Versione: " versione
+	read -p "File contenente funzione main: " main
+	mkdir build/
+	mkdir bin/
+	cp $install_dir/CMakeLists.txt .
+	echo "build/" >> .gitignore
+	echo "bin/" >> .gitignore
+	echo ".*" >> .gitignore
+	sed -i "s/NOME_PROGETTO/$nome/g" CMakeLists.txt
+	sed -i "s/VERSIONE/$versione/g" CMakeLists.txt
+	sed -i "s/FILE_MAIN/$main/g" CMakeLists.txt
+	exit
+fi
+
+if [[ $1 == "Arduino" ]]; then
+	echo "Creazione del progetto Arduino"
+	read -p "Nome del progetto: " nome
+	read -p "Board: " board
+       	dir=$HOME/Documenti/PlatformIO/Projects/$nome
+	mkdir -p $dir
+	cd $dir
+	pio project init --ide emacs --board $board
+	crea_file
+	echo ".pio/" > .gitignore
+	echo ".clang_complete" >> .gitignore
+	echo ".ccls" >> .gitignore
+	echo ".vscode/.*" >> .gitignore
+	echo ".vscode/launch.json" >> .gitignore
+	echo ".vscode/ipch" >> .gitignore
+	cat $install_dir/platformio.ini >> platformio.ini
+	sed -i "s/BOARD/$board/g" platformio.ini
+	cat $install_dir/main_arduino.cpp > $dir/src/main.cpp
+	exit
+fi
+
+if [[ $1 == "ArduinoLib" ]]; then
+	crea_file
+	echo "Creazione libreria arduino..."
+	read -p "Nome libreria: " nome
+	read -p "Descrizione: " descrizione
+	read -p "Versione: " versione
+	read -p "Link repo nuova libreria: " link
+	mkdir src
+	mkdir include
+	cp $install_dir/library.json .
+	sed -i "s/NOME/$nome/g" library.json
+	sed -i "s/DESCRIZIONE/$descrizione/g" library.json
+	sed -i "s/VERSIONE/$versione/g" library.json
+	sed -i "s/LINK/$link.git/g" library.json
+	git remote add origin $link
+	git branch -M main
+	git push -u origin main
+	exit
+fi
+
+if [[ $1 == "AVR" ]]; then
+	crea_file
+	echo "Creazione del progetto AVR"
+	cat $install_dir/main_avr.c > main.c
+	cat $install_dir/Makefile_avr > Makefile
+	exit
+fi
+
+if [[ $1 = "Haxe" ]]; then
+	crea_file
+	echo "Creazione del progetto Haxe"
+	mkdir src
+	mkdir -p "bin/java"
+	mkdir -p "bin/python"
+	mkdir -p "bin/cpp"
+	cat $install_dir/main.hx > src/main.hx
+	cat $install_dir/build.hxml > build.hxml
+	exit
+fi
+
+echo "Linguaggio non riconosciuto..."

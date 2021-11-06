@@ -1,0 +1,9 @@
+## File autogenerato da Nproj
+## Decommentare i linguaggi utilizzati
+
+-cp src
+-main Main
+
+# -python bin/python/main.py
+# -java bin/java
+# -cpp bin/cpp
