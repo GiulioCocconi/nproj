@@ -57,6 +57,9 @@ if [[ $1 == "C" ]]; then
 	read -p "File contenente funzione main: " main
 	mkdir build/
 	mkdir bin/
+	mkdir include/
+	mkdir src/
+	mkdir lib/
 	cp $install_dir/CMakeLists.txt .
 	echo "build/" >> .gitignore
 	echo "bin/" >> .gitignore
@@ -64,6 +67,9 @@ if [[ $1 == "C" ]]; then
 	sed -i "s/NOME_PROGETTO/$nome/g" CMakeLists.txt
 	sed -i "s/VERSIONE/$versione/g" CMakeLists.txt
 	sed -i "s/FILE_MAIN/$main/g" CMakeLists.txt
+	echo "#!/bin/bash" >> build.sh
+	echo "echo 'modificare il file build.sh e CMakeLists.txt'" >> build.sh
+	echo "#cmake [options] -S <path-to-source> -B <path-to-build>" >> build.sh
 	exit
 fi
 
@@ -105,7 +111,7 @@ if [[ $1 == "ArduinoLib" ]]; then
 	git init
 	git branch -M main
 	git add .
-	git commit -m "Commit automatico da nproj"
+	git commit -m "Commit automatico da $0"
 	git remote add origin $link
 	git push -u origin main
 	exit
