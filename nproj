@@ -70,6 +70,7 @@ if [[ $1 == "C" ]]; then
 	echo "#!/bin/bash" >> build.sh
 	echo "echo 'modificare il file build.sh e CMakeLists.txt'" >> build.sh
 	echo "#cmake [options] -S <path-to-source> -B <path-to-build>" >> build.sh
+	chmod +x build.sh
 	exit
 fi
 
