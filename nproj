@@ -50,29 +50,76 @@ if [[ $1 == "Empty" ]]; then
 fi
 
 if [[ $1 == "C" ]]; then
+	echo "Run '$0 CMake' or '$0 Meson'"
+	exit
+fi
+
+if [[ $1 == "CMake" ]]; then
 	crea_file
-	echo "Creazione progetto in C..."
+	echo "Creazione progetto in C/CPP (CMake)..."
 	read -p "Nome del progetto: " nome
 	read -p "Versione: " versione
+	
 	read -p "File contenente funzione main: " main
+	main="src/$main"
+
 	mkdir build/
 	mkdir bin/
 	mkdir include/
 	mkdir src/
 	mkdir lib/
+	
+
 	cp $install_dir/CMakeLists.txt .
+	
 	echo "build/" >> .gitignore
 	echo "bin/" >> .gitignore
 	echo ".*" >> .gitignore
+	
 	sed -i "s/NOME_PROGETTO/$nome/g" CMakeLists.txt
 	sed -i "s/VERSIONE/$versione/g" CMakeLists.txt
 	sed -i "s/FILE_MAIN/$main/g" CMakeLists.txt
+	
 	echo "#!/bin/bash" >> build.sh
 	echo "echo 'modificare il file build.sh e CMakeLists.txt'" >> build.sh
 	echo "#cmake [options] -S <path-to-source> -B <path-to-build>" >> build.sh
 	chmod +x build.sh
+	
 	exit
 fi
+
+if [[ $1 == "Meson" ]]; then
+	crea_file
+	echo "Creazione progetto in C/CPP (Meson)..."
+	read -p "Nome del progetto: " nome
+	
+	read -p "C o CPP? " lang
+	lang=${lang,,}
+	
+	read -p "Versione: " versione
+	read -p "File contenente funzione main: " main
+
+	mkdir build/
+	mkdir include/
+	mkdir src/
+	
+	cp $install_dir/mesonDefault.build ./meson.build
+	cp $install_dir/mesonSrc.build ./src/meson.build
+	
+	touch src/$main
+
+	sed -i "s/NOME_PROGETTO/'$nome'/g" meson.build
+	sed -i "s/VERSIONE/'$versione'/g"  meson.build
+	sed -i "s/LANG/'$lang'/g"  meson.build
+	sed -i "s/FILE_MAIN/'$main'/g"  src/meson.build
+	
+	meson setup build
+
+	exit
+fi
+
+
+
 
 if [[ $1 == "Arduino" ]]; then
 	echo "Creazione del progetto Arduino"

@@ -1,0 +1,16 @@
+project(NOME_PROGETTO, LANG,
+  version : VERSIONE,
+  default_options : ['c_std=c11', 'cpp_std=c++11'])
+
+comp = meson.get_compiler(LANG)
+
+deps = []
+
+inc = include_directories('include/')
+
+subdir('src')
+
+exe = executable(NOME_PROGETTO, exesrc,
+  include_directories : inc,
+  dependencies : deps,
+  install : false)

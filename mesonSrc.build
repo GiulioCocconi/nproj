@@ -1,0 +1,8 @@
+exesrc = files(FILE_MAIN)
+
+# fileLibreriaUno = files(file della libreria)
+#libreriaUno = static_library('uno', fileLibreriaUno, 
+#  include_directories : inc)
+#dipendenzaUno = declare_dependency(link_with : libreriaUno)
+
+deps += []
