@@ -9,6 +9,10 @@ install_dir="/opt/Nproj"
 function crea_file {
 	touch .projectile
 	touch .gitignore
+	
+	echo ".vscode/.*" >> .gitignore
+	echo ".vscode/launch.json" >> .gitignore
+	echo ".vscode/ipch" >> .gitignore
 }
 
 if [[ $1 == "install" ]]; then
@@ -68,7 +72,6 @@ if [[ $1 == "CMake" ]]; then
 	mkdir include/
 	mkdir src/
 	mkdir lib/
-	
 
 	cp $install_dir/CMakeLists.txt .
 	
@@ -119,26 +122,23 @@ if [[ $1 == "Meson" ]]; then
 fi
 
 
-
-
 if [[ $1 == "Arduino" ]]; then
+	crea_file
 	echo "Creazione del progetto Arduino"
 	read -p "Nome del progetto: " nome
 	read -p "Board: " board
-       	dir=$HOME/Documenti/PlatformIO/Projects/$nome
-	mkdir -p $dir
-	cd $dir
+
 	pio project init --ide emacs --board $board
-	crea_file
+	
 	echo ".pio/" > .gitignore
 	echo ".clang_complete" >> .gitignore
 	echo ".ccls" >> .gitignore
-	echo ".vscode/.*" >> .gitignore
-	echo ".vscode/launch.json" >> .gitignore
-	echo ".vscode/ipch" >> .gitignore
+
 	cat $install_dir/platformio.ini >> platformio.ini
 	sed -i "s/BOARD/$board/g" platformio.ini
-	cat $install_dir/main_arduino.cpp > $dir/src/main.cpp
+
+	cat $install_dir/main_arduino.cpp > src/main.cpp
+
 	exit
 fi
 
@@ -149,39 +149,48 @@ if [[ $1 == "ArduinoLib" ]]; then
 	read -p "Descrizione: " descrizione
 	read -p "Versione: " versione
 	read -p "Link repo nuova libreria: " link
+
 	mkdir src
 	mkdir include
+
 	cp $install_dir/library.json .
 	sed -i "s/NOME/$nome/g" library.json
 	sed -i "s/DESCRIZIONE/$descrizione/g" library.json
 	sed -i "s/VERSIONE/$versione/g" library.json
-	sed -i "s/LINK/$link.git/g" library.json
+	sed -i s/LINK/"$link.git"/g library.json
+
 	git init
 	git branch -M main
 	git add .
 	git commit -m "Commit automatico da $0"
 	git remote add origin $link
 	git push -u origin main
+
 	exit
 fi
 
 if [[ $1 == "AVR" ]]; then
 	crea_file
 	echo "Creazione del progetto AVR"
+
 	cat $install_dir/main_avr.c > main.c
 	cat $install_dir/Makefile_avr > Makefile
+
 	exit
 fi
 
 if [[ $1 = "Haxe" ]]; then
 	crea_file
 	echo "Creazione del progetto Haxe"
+
 	mkdir src
 	mkdir -p "bin/java"
 	mkdir -p "bin/python"
 	mkdir -p "bin/cpp"
+
 	cat $install_dir/main.hx > src/main.hx
 	cat $install_dir/build.hxml > build.hxml
+
 	exit
 fi
 
