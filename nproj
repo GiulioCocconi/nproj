@@ -24,13 +24,13 @@ if [[ $1 == "install" ]]; then
 	echo "Installazione script in $install_dir"
 
 	sudo mkdir $install_dir
-	sudo cp $0 $install_dir
-	sudo cp "$(dirname "$0")/CMakeLists.txt" $install_dir
+	sudo cp -r $(dirname "$0")/* $install_dir
+	sudo cp -r $(dirname "$0")/.git $install_dir
 	sudo chmod 755 "$install_dir/nproj"
 
 	if [[ -d "/opt/bin" ]]; then
 		echo "Creazione alias in /opt/bin..."
-		ln -s "$install_dir/nproj" "/opt/bin/nproj"	
+		sudo ln -s "$install_dir/nproj" "/opt/bin/nproj"	
 	fi
 
 	sudo touch "$install_dir/.installed"
